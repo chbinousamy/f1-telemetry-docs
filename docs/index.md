@@ -58,6 +58,11 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 | Simuler un vrai circuit (Monaco, Paul Ricard, Silverstone) | `python telemetry_generator.py --network local --track monaco` |
 | Analyser une session dans MoTeC i2 Pro | `python motec_export.py --archive archives/<nom> --car 0` |
 
+!!! tip "Afficher le tracé du circuit dans i2 Pro"
+    Ajoute un graphique **Channel vs Channel (XY)** avec en X **Track Pos X** et en Y
+    **Track Pos Z** — ça trace la forme réelle du circuit à partir de la position exportée.
+    (Pas *Elevation* en Y : c'est l'altitude, pas le plan du sol — ça donnerait une ligne plate.)
+
 ## Fichiers du projet
 
 ```text
