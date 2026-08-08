@@ -86,6 +86,7 @@ Dans le jeu : **Réglages → Réglages du jeu → Réglages UDP Telemetry** :
    ```bash
    python telemetry_generator.py --network local --cars 2 --laps 1
    ```
+   (toutes les options, dont `--track` pour un vrai circuit : [Générateur](generator.md))
 2. Vérifier les logs du listener :
    ```bash
    docker compose logs -f telemetry_listener

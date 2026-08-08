@@ -32,6 +32,8 @@ python telemetry_generator.py --network local --cars 4 --laps 4
 python query_telemetry.py --session
 ```
 
+Toutes les options du générateur (dont `--track` pour un vrai circuit) : [Générateur](generator.md).
+
 Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Address = 127.0.0.1`,
 `UDP Port = 20777`, `UDP Format = 2025`. Détails dans [Installation](installation.md).
 
