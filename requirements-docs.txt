@@ -1,0 +1,5 @@
+# Dependencies to build/preview the documentation site (mkdocs.yml + docs/*.md).
+# Not needed to run the listener/generator/query tool -- see requirements.txt for that.
+mkdocs==1.6.1
+mkdocs-material==9.7.7
+pymdown-extensions==11.0.1

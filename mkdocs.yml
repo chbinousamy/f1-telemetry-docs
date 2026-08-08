@@ -1,0 +1,60 @@
+site_name: F1 25 Telemetry Collector
+site_description: Format binaire officiel F1 25 vers FastF1 vers MongoDB
+site_url: https://chbinousamy.github.io/f1-telemetry-docs/
+repo_url: https://github.com/chbinousamy/f1-telemetry-docs
+repo_name: chbinousamy/f1-telemetry-docs
+edit_uri: edit/master/docs/
+
+theme:
+  name: material
+  language: fr
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Passer en mode sombre
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Passer en mode clair
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+nav:
+  - Accueil: index.md
+  - Vue d'ensemble: overview.md
+  - Installation: installation.md
+  - Listener: listener.md
+  - Générateur: generator.md
+  - Wireshark: wireshark.md
+  - Requêtes: query.md
+  - Format Données: data-format.md
+  - Dépannage: troubleshooting.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - tables
+  - toc:
+      permalink: true
+      title: Sur cette page
