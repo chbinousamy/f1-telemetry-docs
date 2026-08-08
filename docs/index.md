@@ -59,9 +59,20 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 | Analyser une session dans MoTeC i2 Pro | `python motec_export.py --archive archives/<nom> --car 0` |
 
 !!! tip "Afficher le tracé du circuit dans i2 Pro"
-    Ajoute un graphique **Channel vs Channel (XY)** avec en X **Track Pos X** et en Y
-    **Track Pos Z** — ça trace la forme réelle du circuit à partir de la position exportée.
-    (Pas *Elevation* en Y : c'est l'altitude, pas le plan du sol — ça donnerait une ligne plate.)
+    **Méthode fiable (recommandée) :** graphique **Channel vs Channel (XY)** avec en X
+    **Track Pos X** et en Y **Track Pos Z** — trace directement la vraie position exportée, sans
+    aucune reconstruction. (Pas *Elevation* en Y : c'est l'altitude, pas le plan du sol — ça
+    donnerait une ligne plate.)
+
+    **Alternative native i2 Pro :** l'outil **"Track Generation Using Speed + Lateral G Force"**
+    (barre d'outils Track Editor) reconstruit la forme par calcul à partir de **Ground Speed** et
+    **G Force Lat**, tous deux déjà exportés. Pratique si tu préfères le widget Track Map natif,
+    mais c'est une méthode par intégration (dead-reckoning) : elle dérive sur un tour entier et
+    peut ne pas se refermer proprement sur des circuits à forte densité de virages comme Monaco
+    (19 virages en 3,3 km) — préfère le graphique XY si tu vois le tracé se croiser.
+
+    N'utilise pas **"Track Generation Using GPS data"** — nos positions sont en repère local
+    (mètres), pas en coordonnées GPS réelles (latitude/longitude).
 
 ## Fichiers du projet
 
