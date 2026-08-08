@@ -49,6 +49,8 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 | Tester le chemin réseau complet en Docker | `docker compose --profile demo up -d` (cible `host.docker.internal`) |
 | Analyser les paquets réseau | Voir [Wireshark](wireshark.md) |
 | Exporter/archiver une session | `python query_telemetry.py --archive` |
+| Simuler un vrai circuit (Monaco, Paul Ricard, Silverstone) | `python telemetry_generator.py --network local --track monaco` |
+| Analyser une session dans MoTeC i2 Pro | `python motec_export.py --archive archives/<nom> --car 0` |
 
 ## Fichiers du projet
 
@@ -56,6 +58,9 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 f1_packet_format.py            # Layout binaire F1 25 (source de vérité)
 f1_telemetry_listener.py       # Listener UDP → FastF1 → MongoDB
 telemetry_generator.py         # Générateur de télémétrie de test
+fetch_track_layout.py          # Outil ponctuel : FastF1 → tracks/<nom>.json
+tracks/                        # Tracés réels (monaco, paul_ricard, silverstone)
+motec_export.py                # Convertit une session archivée en .ld MoTeC i2 Pro
 query_telemetry.py             # Requêtes, export et archivage
 wireshark_f1_25_dissector.lua  # Dissecteur Wireshark (copier dans %APPDATA%\Wireshark\plugins\)
 docker-compose.yml             # mongodb + telemetry_listener (+ telemetry_generator via --profile demo)

@@ -20,12 +20,50 @@ exact du jeu — utilisable comme substitut au vrai F1 25 pour tester tout le pi
 | `--cars N` | 4 (1-22) |
 | `--laps N` | 4 |
 | `--speed-factor F` | 1.0 (0.5=plus lent, 2.0=plus rapide) |
-| `--track-id N` | 0 |
+| `--track-id N` | 0 (identifiant cosmétique envoyé dans le paquet session) |
+| `--track {generic,monaco,paul_ricard,silverstone}` | `generic` |
 | `--no-randomness` | désactivé (vitesse sans variation aléatoire) |
 
 Variables d'environnement équivalentes (service Docker `telemetry_generator`) :
 `GENERATOR_NETWORK`, `GENERATOR_IP`, `GENERATOR_PORT`, `GENERATOR_CARS`, `GENERATOR_LAPS`,
-`GENERATOR_SPEED_FACTOR`, `GENERATOR_TRACK_ID`.
+`GENERATOR_SPEED_FACTOR`, `GENERATOR_TRACK_ID`, `GENERATOR_TRACK`.
+
+## Circuits réels (`--track`)
+
+`--track generic` (par défaut) simule un cercle avec un profil de vitesse sinusoïdal synthétique —
+aucune donnée réelle. Les trois autres valeurs chargent un **vrai tracé** depuis
+`tracks/<nom>.json`, construit par `fetch_track_layout.py` à partir de la télémétrie FastF1 d'un
+vrai tour rapide : position réelle (X/Y), longueur réelle du circuit, et profil de vitesse réel en
+fonction de la distance parcourue.
+
+```bash
+python telemetry_generator.py --network local --track monaco --cars 3 --laps 1
+```
+
+Concrètement, ça veut dire que les voitures freinent vraiment fort à l'épingle de Monaco et
+roulent vraiment vite sur la ligne droite du Mistral à Paul Ricard — la courbure et le braquage
+(`Steering Input`) sont dérivés de la vraie forme du circuit, pas d'un modèle synthétique.
+
+| Circuit | Source FastF1 | Longueur | Tour de référence |
+|---|---|---|---|
+| `monaco` | Monaco 2023, course | 3275 m | 1:15.650 (HAM) |
+| `paul_ricard` | French GP 2022, course | 5764 m | 1:35.781 (SAI) |
+| `silverstone` | Silverstone 2023, course | 5801 m | 1:30.275 (VER) |
+
+Vérifié : sur un test de 3 voitures / 2 tours, les temps au tour simulés (73-77s à Monaco, 94-95s
+à Paul Ricard, 89-93s à Silverstone) collent au tour de référence à quelques % près — l'écart
+vient de la variation de rythme par voiture (`skill`, ±3%) et du bruit aléatoire, pas d'un
+problème de modèle.
+
+### Régénérer/ajouter un circuit
+
+```bash
+pip install -r requirements-tracks.txt   # fastf1 -- outil ponctuel, pas une dépendance runtime
+python fetch_track_layout.py --year 2023 --event Monaco --output tracks/monaco.json
+```
+
+`--event` accepte tout identifiant que FastF1 reconnaît (nom du Grand Prix, du circuit, ou de la
+ville hôte).
 
 ## Exemples
 
