@@ -82,11 +82,11 @@ Dans le jeu : **Réglages → Réglages du jeu → Réglages UDP Telemetry** :
 
 ### Sans le jeu : avec le générateur
 
-1. Lancer le générateur en local (process Windows, cible le port publié) :
+1. Lancer le générateur en local (process Windows, cible le port publié) — rejoue une vraie course :
    ```bash
-   python telemetry_generator.py --network local --cars 2 --laps 1
+   python telemetry_generator.py --network local --replay austrian_2026 --speed-factor 100
    ```
-   (toutes les options, dont `--track` pour un vrai circuit : [Générateur](generator.md))
+   (toutes les courses disponibles et leurs options : [Générateur](generator.md))
 2. Vérifier les logs du listener :
    ```bash
    docker compose logs -f telemetry_listener

@@ -39,7 +39,7 @@
 | UDP Listener | `f1_telemetry_listener.py` | Parse F1 25, convertit en FastF1, stocke en MongoDB |
 | Layout binaire | `f1_packet_format.py` | Source de vérité unique du format (header, motion, telemetry, lap, préfixe session) |
 | MongoDB | — | Stocke la télémétrie, une collection par type de paquet |
-| Générateur | `telemetry_generator.py` | Simule une course réaliste dans le format binaire réel du jeu |
+| Générateur | `telemetry_generator.py` | Rejoue une vraie course (FastF1) dans le format binaire réel du jeu |
 | Wireshark | `wireshark_f1_25_dissector.lua` | Décode les paquets — ne voit que le trafic passant par une vraie interface Windows |
 | Query Tool | `query_telemetry.py` | Interroge, exporte et archive MongoDB |
 

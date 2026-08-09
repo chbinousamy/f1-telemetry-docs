@@ -34,7 +34,7 @@ traffic capture"* nécessaire pour voir le trafic `127.0.0.1`.
 
 1. Lancer le générateur en mode local (envoie vers `127.0.0.1:20777`, le port publié par le conteneur listener) :
    ```bash
-   python telemetry_generator.py --network local --cars 4 --laps 4
+   python telemetry_generator.py --network local --replay austrian_2026 --speed-factor 100
    ```
 2. Dans Wireshark, sélectionner l'interface **"Adapter for loopback traffic capture"** — pas Ethernet ni Wi-Fi
 3. Filtre : `udp.port == 20777`

@@ -29,14 +29,14 @@ sans le jeu, et un dissecteur Wireshark pour inspecter les paquets.
 # MongoDB + listener
 docker compose up -d --build
 
-# Tester sans le jeu (process local, cible le port publié)
-python telemetry_generator.py --network local --cars 4 --laps 4
+# Tester sans le jeu (process local, cible le port publié) -- rejoue une vraie course
+python telemetry_generator.py --network local --replay austrian_2026
 
 # Vérifier les données
 python query_telemetry.py --session
 ```
 
-Toutes les options du générateur (dont `--track` pour un vrai circuit) : [Générateur](generator.md).
+Toutes les courses disponibles et les options du générateur : [Générateur](generator.md).
 
 Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Address = 127.0.0.1`,
 `UDP Port = 20777`, `UDP Format = 2025`. Détails dans [Installation](installation.md).
@@ -55,7 +55,6 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 | Tester le chemin réseau complet en Docker | `docker compose --profile demo up -d` (cible `host.docker.internal`) |
 | Analyser les paquets réseau | Voir [Wireshark](wireshark.md) |
 | Exporter/archiver une session | `python query_telemetry.py --archive` |
-| Simuler un vrai circuit (Monaco, Paul Ricard, Silverstone) | `python telemetry_generator.py --network local --track monaco` |
 | Rejouer une vraie course 2026 (Autriche, GB, Belgique, Hongrie) | `python telemetry_generator.py --network local --replay austrian_2026` |
 | Analyser une session dans MoTeC i2 Pro | `python motec_export.py --archive archives/<nom> --car 0` |
 
@@ -80,9 +79,7 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 ```text
 f1_packet_format.py            # Layout binaire F1 25 (source de vérité)
 f1_telemetry_listener.py       # Listener UDP → FastF1 → MongoDB
-telemetry_generator.py         # Générateur de télémétrie de test
-fetch_track_layout.py          # Outil ponctuel : FastF1 → tracks/<nom>.json
-tracks/                        # Tracés réels (monaco, paul_ricard, silverstone)
+telemetry_generator.py         # Rejoue une vraie course (--replay)
 fetch_race_telemetry.py        # Outil ponctuel : FastF1 → race_replays/<nom>.json
 race_replays/                  # Télémétrie réelle du vainqueur, 4 courses 2026 (volume Docker)
 motec_export.py                # Convertit une session archivée en .ld MoTeC i2 Pro
