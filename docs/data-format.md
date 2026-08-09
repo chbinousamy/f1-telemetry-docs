@@ -17,6 +17,74 @@ Layout binaire exact des paquets F1 25, et leur conversion en format FastF1.
     EA/Codemasters "Data Output from F1 25"), vérifié par des tests round-trip (génération →
     parsing → conversion FastF1) sans erreur.
 
+## F1 25 vs FastF1 : quelles données en plus, en moins ?
+
+Ce projet fait le pont entre deux sources fondamentalement différentes : le protocole UDP du
+**jeu vidéo** F1 25 (une simulation physique) et [FastF1](https://theoehrly.github.io/Fast-F1/),
+qui extrait les données officielles publiques du Live Timing de la **vraie** Formule 1. Même les
+champs qui portent le même nom (vitesse, position) ne mesurent pas la même chose à la source —
+d'où le besoin, dans `fetch_race_telemetry.py`, de dériver certains canaux plutôt que de les lire
+directement.
+
+### Données communes aux deux
+
+| Catégorie | Champs |
+|---|---|
+| Pilotage | Vitesse (`Speed`), position accélérateur (`Throttle`), frein (`Brake`), régime moteur (`RPM`), rapport engagé (`nGear`), statut DRS |
+| Chrono | Temps au tour, temps par secteur, temps aux stands |
+| Position | Coordonnées X/Y/Z (tracé et trajectoire) |
+| Pneus & météo | Type de gomme, âge des pneus, température air/piste |
+| Direction de course | Drapeaux, périodes de Safety Car / VSC |
+
+!!! warning "Nuances, pas de vraies équivalences"
+    - **`Brake`** : dans FastF1 c'est généralement un booléen (freiné / pas freiné), pas un
+      pourcentage continu comme dans F1 25 — `fetch_race_telemetry.py` fait
+      `tel['Brake'].astype(float)` précisément pour ça.
+    - **`DRS`** : le champ FastF1 n'est pas un simple booléen, c'est un code numérique à plusieurs
+      états. On a dû seuiller avec `DRS >= 10` pour en tirer un flag exploitable.
+
+### Exclusif à F1 25 (absent de FastF1)
+
+En F1 réelle, les écuries gardent leurs données internes confidentielles et ne transmettent qu'un
+flux restreint à la FOM. Le jeu, lui, simule tout et expose tout :
+
+- **Températures et pressions des 4 pneus/freins** — FastF1 n'a que le type de gomme et son
+  ancienneté, jamais de température ou pression mesurée
+- **Usure et dégâts du véhicule** — usure des gommes roue par roue, dégâts aileron/plancher/
+  boîte/moteur
+- **G-force tridimensionnelle** (latérale, longitudinale, verticale) et **assiette du véhicule**
+  (yaw/pitch/roll) — FastF1 n'a aucune donnée d'orientation ou d'accélération du châssis
+- **Gestion fine ERS/moteur** — énergie déployée/récupérée par tour (MGU-K/MGU-H séparément),
+  % de batterie ERS, mode de mélange carburant
+- **Position embrayage** (`clutch`)
+
+!!! danger "Correction : pas d'angle de volant exact"
+    Une affirmation courante (et fausse) est que F1 25 fournirait l'angle de braquage exact en
+    degrés. En réalité `steer` est une valeur **normalisée -1.0 à 1.0** (fraction du braquage
+    maximal), pas un angle mesuré — le jeu n'expose ni ne connaît le ratio de direction réel de la
+    voiture nécessaire pour convertir ça en degrés. C'est pour ça que le canal exporté par
+    `motec_export.py` s'appelle **"Steering Input"**, pas "Steered Angle".
+
+!!! question "À vérifier : suspensions et glissement roue par roue"
+    On voit parfois citer le débattement de suspension ou le glissement (wheel slip) par roue
+    comme données F1 25. Ce n'est confirmé nulle part dans ce projet ni dans la spec officielle
+    consultée — ça ressemble davantage aux capacités d'un simulateur type iRacing/ACC. À vérifier
+    contre le PDF officiel "Data Output from F1 25" avant de s'y fier.
+
+### Exclusif à FastF1 (absent de F1 25)
+
+- **Messages radio d'équipe** (Team Radio) — communications audio réelles pilote/ingénieur
+- **Historique complet des vrais Grand Prix** depuis 2018 (essais, qualifs, sprint, course)
+
+!!! danger "Correction : les canaux \"dérivés\" ne sont pas un avantage FastF1"
+    On présente parfois la distance parcourue dans le tour ou le delta de temps au pilote de
+    devant comme des fonctionnalités exclusives à FastF1 (via `.add_distance()`,
+    `.add_driver_ahead()`). C'est l'inverse : F1 25 transmet ça **nativement** dans le paquet Lap
+    Data — `lap_distance`, `total_distance`, `delta_to_car_in_front_in_ms`,
+    `delta_to_race_leader_in_ms` sont des champs du protocole (voir `LAP_CAR_FORMAT` plus bas).
+    FastF1 doit au contraire **recalculer** ces valeurs après coup à partir des données brutes de
+    timing — le jeu les envoie déjà toutes faites.
+
 ## Architecture des paquets
 
 F1 25 envoie sa télémétrie via UDP en paquets binaires little-endian, chacun précédé d'un header
