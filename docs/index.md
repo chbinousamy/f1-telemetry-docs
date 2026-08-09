@@ -1,12 +1,12 @@
 # F1 25 Telemetry Collector
 
 <p align="center">
-  <img src="img/f1-logo.png" alt="F1 25 Telemetry Collector" width="420">
+  <img src="img/f1-hero.jpg" alt="F1 25 Telemetry Collector" width="800">
 </p>
 
 Capture la télémétrie UDP du jeu **F1 25** (format binaire officiel), la convertit au format
-**FastF1** et la stocke dans **MongoDB**. Inclut un générateur de télémétrie simulée pour tester
-sans le jeu, et un dissecteur Wireshark pour inspecter les paquets.
+**FastF1** et la stocke dans **MongoDB**. Inclut un générateur qui rejoue de la vraie télémétrie de
+course (FastF1) pour tester sans le jeu, et un dissecteur Wireshark pour inspecter les paquets.
 
 !!! info "Code source"
     Ce site documente le projet [chbinousamy/f1-telemetry](https://github.com/chbinousamy/f1-telemetry)
