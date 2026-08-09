@@ -84,6 +84,30 @@ volume ni de l'étape 2.
     71 tours rejoués sans erreur, `track_id` correctement à 17 (Austria) dans MongoDB, temps au
     tour réels préservés dans les paquets lap.
 
+## Export MoTeC i2 Pro
+
+`motec_export.py` a deux sources possibles :
+
+| Mode | Commande | Résolution |
+|---|---|---|
+| `--replay` | `python motec_export.py --replay race_replays/austrian_2026.json` | Pleine résolution native (~10 Hz, ex. 51 983 échantillons pour l'Autriche) — lit le JSON directement, aucun Docker/MongoDB requis |
+| `--archive` | `python motec_export.py --archive archives/<nom> --car 0` | Résolution de la session archivée (dépend du `--speed-factor` utilisé pour la générer) |
+
+!!! warning "Pourquoi pas toujours --archive ?"
+    Le générateur envoie des paquets à un rythme **fixe de 10/s en temps réel** (`SIM_DT=0.1s`
+    de pause par tick, quel que soit `--speed-factor`) — seul le nombre de secondes de course
+    couvertes par tick change. À `--speed-factor 300` (pratique pour un test rapide, ~17s au lieu
+    de 87 min), chaque tick saute 30s de course : une session archivée dans ces conditions ne
+    contient qu'environ 170 échantillons pour toute la course, au lieu des ~52 000 natifs.
+    `--replay` sur `race_replays/*.json` directement évite ce compromis — c'est pour ça que les
+    `.ld` livrés dans `race_replays/` sont générés ainsi, pas via le pipeline UDP complet.
+
+Les 4 courses ont déjà leur `.ld` pré-généré dans `race_replays/` (`austrian_2026.ld`,
+`british_2026.ld`, `belgian_2026.ld`, `hungarian_2026.ld`) — 14 canaux (vitesse, pédales,
+direction, rapport, régime, DRS, G latérale, position, distance, tour, position course), tous
+dérivés ou lus directement du JSON source. Pour le tracé du circuit dans i2 Pro, voir le tip dans
+[Accueil](index.md).
+
 ## Exemples
 
 Test rapide en local (visible dans Wireshark) :

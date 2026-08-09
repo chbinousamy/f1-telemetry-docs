@@ -56,7 +56,7 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 | Analyser les paquets réseau | Voir [Wireshark](wireshark.md) |
 | Exporter/archiver une session | `python query_telemetry.py --archive` |
 | Rejouer une vraie course 2026 (Autriche, GB, Belgique, Hongrie) | `python telemetry_generator.py --network local --replay austrian_2026` |
-| Analyser une session dans MoTeC i2 Pro | `python motec_export.py --archive archives/<nom> --car 0` |
+| Analyser une session dans MoTeC i2 Pro | `python motec_export.py --replay race_replays/austrian_2026.json` |
 
 !!! tip "Afficher le tracé du circuit dans i2 Pro"
     **Méthode fiable (recommandée) :** graphique **Channel vs Channel (XY)** avec en X
@@ -82,7 +82,8 @@ f1_telemetry_listener.py       # Listener UDP → FastF1 → MongoDB
 telemetry_generator.py         # Rejoue une vraie course (--replay)
 fetch_race_telemetry.py        # Outil ponctuel : FastF1 → race_replays/<nom>.json
 race_replays/                  # Télémétrie réelle du vainqueur, 4 courses 2026 (volume Docker)
-motec_export.py                # Convertit une session archivée en .ld MoTeC i2 Pro
+                                # + un .ld MoTeC pré-généré par course
+motec_export.py                # Convertit une session (archive ou race_replays/*.json) en .ld MoTeC i2 Pro
 query_telemetry.py             # Requêtes, export et archivage
 wireshark_f1_25_dissector.lua  # Dissecteur Wireshark (copier dans %APPDATA%\Wireshark\plugins\)
 docker-compose.yml             # mongodb + telemetry_listener (+ telemetry_generator via --profile demo)
