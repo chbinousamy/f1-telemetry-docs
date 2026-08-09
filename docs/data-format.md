@@ -2,6 +2,14 @@
 
 Layout binaire exact des paquets F1 25, et leur conversion en format FastF1.
 
+**Le point de fond :** F1 25 est un jeu vidéo — ses données décrivent une simulation physique par
+un moteur de jeu. FastF1 tire ses données du vrai championnat via l'API de chronométrage
+officielle utilisée par les diffuseurs — ce sont de vraies voitures, de vraies courses. Même les
+champs qui portent le même nom (vitesse, position) ne mesurent pas la même chose à la source —
+l'un est calculé par un moteur physique, l'autre vient de vrais capteurs (ou d'estimations
+broadcast). C'est exactement pourquoi le pont qu'on a construit (`fetch_race_telemetry.py` →
+format F1 25) doit combler certains champs par dérivation plutôt que par lecture directe.
+
 !!! info "Source de vérité"
     Ce layout est défini une seule fois dans `f1_packet_format.py` à la racine du projet, et
     importé à la fois par `f1_telemetry_listener.py` (parsing) et `telemetry_generator.py`
