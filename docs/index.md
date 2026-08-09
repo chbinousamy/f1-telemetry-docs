@@ -56,6 +56,7 @@ Pour le vrai jeu : **Réglages → Réglages UDP Telemetry**, avec `UDP IP Addre
 | Analyser les paquets réseau | Voir [Wireshark](wireshark.md) |
 | Exporter/archiver une session | `python query_telemetry.py --archive` |
 | Simuler un vrai circuit (Monaco, Paul Ricard, Silverstone) | `python telemetry_generator.py --network local --track monaco` |
+| Rejouer une vraie course 2026 (Autriche, GB, Belgique, Hongrie) | `python telemetry_generator.py --network local --replay austrian_2026` |
 | Analyser une session dans MoTeC i2 Pro | `python motec_export.py --archive archives/<nom> --car 0` |
 
 !!! tip "Afficher le tracé du circuit dans i2 Pro"
@@ -82,6 +83,8 @@ f1_telemetry_listener.py       # Listener UDP → FastF1 → MongoDB
 telemetry_generator.py         # Générateur de télémétrie de test
 fetch_track_layout.py          # Outil ponctuel : FastF1 → tracks/<nom>.json
 tracks/                        # Tracés réels (monaco, paul_ricard, silverstone)
+fetch_race_telemetry.py        # Outil ponctuel : FastF1 → race_replays/<nom>.json
+race_replays/                  # Télémétrie réelle du vainqueur, 4 courses 2026 (volume Docker)
 motec_export.py                # Convertit une session archivée en .ld MoTeC i2 Pro
 query_telemetry.py             # Requêtes, export et archivage
 wireshark_f1_25_dissector.lua  # Dissecteur Wireshark (copier dans %APPDATA%\Wireshark\plugins\)

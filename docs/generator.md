@@ -20,13 +20,14 @@ exact du jeu — utilisable comme substitut au vrai F1 25 pour tester tout le pi
 | `--cars N` | 4 (1-22) |
 | `--laps N` | 4 |
 | `--speed-factor F` | 1.0 (0.5=plus lent, 2.0=plus rapide) |
-| `--track-id N` | 0 (identifiant cosmétique envoyé dans le paquet session) |
-| `--track {generic,monaco,paul_ricard,silverstone}` | `generic` |
+| `--track-id N` | id réel F1-jeu correspondant à `--track`/`--replay` (ex. Monaco=5), ou 0 |
+| `--track {generic,monaco,paul_ricard,silverstone}` | `generic` — mutuellement exclusif avec `--replay` |
+| `--replay {austrian_2026,british_2026,belgian_2026,hungarian_2026}` | aucun — mutuellement exclusif avec `--track` |
 | `--no-randomness` | désactivé (vitesse sans variation aléatoire) |
 
 Variables d'environnement équivalentes (service Docker `telemetry_generator`) :
 `GENERATOR_NETWORK`, `GENERATOR_IP`, `GENERATOR_PORT`, `GENERATOR_CARS`, `GENERATOR_LAPS`,
-`GENERATOR_SPEED_FACTOR`, `GENERATOR_TRACK_ID`, `GENERATOR_TRACK`.
+`GENERATOR_SPEED_FACTOR`, `GENERATOR_TRACK_ID`, `GENERATOR_TRACK`, `GENERATOR_REPLAY`.
 
 ## Circuits réels (`--track`)
 
@@ -64,6 +65,59 @@ python fetch_track_layout.py --year 2023 --event Monaco --output tracks/monaco.j
 
 `--event` accepte tout identifiant que FastF1 reconnaît (nom du Grand Prix, du circuit, ou de la
 ville hôte).
+
+## Rejouer une vraie course (`--replay`)
+
+Contrairement à `--track` (simulation physique sur un vrai tracé), `--replay` **ne simule rien** :
+il rejoue directement la télémétrie réelle enregistrée du vainqueur d'une vraie course — vitesse,
+position, throttle/brake, rapport, régime, DRS, tout vient de la donnée FastF1, échantillonnée à
+10 Hz. Un seul pilote, donc `--cars` est ignoré (forcé à 1) et `--laps` aussi (le nombre de tours
+vient de la course réelle).
+
+```bash
+python telemetry_generator.py --network local --replay austrian_2026
+```
+
+| Course | Vainqueur | Tours | Durée réelle |
+|---|---|---|---|
+| `austrian_2026` | George Russell (Mercedes) | 71 | 86,6 min |
+| `british_2026` | Charles Leclerc (Ferrari) | 52 | 87,2 min |
+| `belgian_2026` | Kimi Antonelli (Mercedes) | 44 | 84,7 min |
+| `hungarian_2026` | Lando Norris (McLaren) | 70 | 99,9 min |
+
+À `--speed-factor 1.0` (défaut), une course dure donc jusqu'à 100 minutes en temps réel — utiliser
+`--speed-factor` pour accélérer (`--speed-factor 100` rejoue la course en moins d'une minute, utile
+pour tester le pipeline rapidement).
+
+### Données stockées dans un volume Docker
+
+Les fichiers `race_replays/*.json` (récupérés une fois via `fetch_race_telemetry.py`, un outil
+ponctuel qui a besoin de FastF1 — non installé dans l'image du générateur) sont copiés dans un
+**volume Docker nommé** `race_replays`, monté en lecture seule dans le conteneur
+`telemetry_generator`. Ça découple les données (potentiellement volumineuses, ~10-12 Mo par
+course) de l'image Docker : pas besoin de reconstruire l'image pour ajouter/mettre à jour une
+course.
+
+```bash
+# 1. Récupérer une course (une fois, en local -- a besoin de fastf1)
+pip install -r requirements-tracks.txt
+python fetch_race_telemetry.py --year 2026 --event Austria --track-id 17 \
+  --output race_replays/austrian_2026.json
+
+# 2. Copier dans le volume Docker nommé (une fois, ou après mise à jour)
+docker compose --profile seed run --rm seed_race_replays
+
+# 3. Utiliser depuis le conteneur (le volume est déjà monté)
+docker compose --profile demo run --rm -e GENERATOR_REPLAY=austrian_2026 telemetry_generator
+```
+
+En local (hors Docker), `--replay` lit directement `./race_replays/<nom>.json` — pas besoin du
+volume ni de l'étape 2.
+
+!!! success "Vérifié"
+    Testé de bout en bout dans le vrai conteneur (volume monté, variable `GENERATOR_REPLAY`) :
+    71 tours rejoués sans erreur, `track_id` correctement à 17 (Austria) dans MongoDB, temps au
+    tour réels préservés dans les paquets lap.
 
 ## Exemples
 
