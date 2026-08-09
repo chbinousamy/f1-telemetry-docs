@@ -41,8 +41,22 @@ directement.
 | Pilotage | Vitesse (`Speed`), position accélérateur (`Throttle`), frein (`Brake`), régime moteur (`RPM`), rapport engagé (`nGear`), statut DRS |
 | Chrono | Temps au tour, temps par secteur, temps aux stands |
 | Position | Coordonnées X/Y/Z (tracé et trajectoire) |
-| Pneus & météo | Type de gomme, âge des pneus, température air/piste |
+| Météo | Pluie, température air/piste |
+| Pneus | Type de gomme, âge des pneus |
 | Direction de course | Drapeaux, périodes de Safety Car / VSC |
+
+!!! info "Commun aux deux formats ≠ capturé par ce pipeline"
+    Ce tableau liste ce que les deux formats *peuvent* exprimer en général, pas forcément ce que
+    `race_replays/*.json` contient aujourd'hui.
+
+    - **Météo** : capturée. `fetch_race_telemetry.py` récupère `session.weather_data` (pluie,
+      température air/piste) et `telemetry_generator.py` l'envoie réellement dans le paquet
+      Session — plus de valeurs codées en dur.
+    - **Pneus** (compound, âge) : **pas capturée**, et ne peut pas l'être sans plus de travail —
+      dans le vrai protocole F1 25, ces champs vivent dans le paquet **Car Status**, qu'on n'a
+      jamais implémenté dans `f1_packet_format.py` (seulement header/motion/telemetry/lap/
+      préfixe session). Rien ne les transporte pour l'instant, même si FastF1 les a
+      (`laps['Compound']`, `laps['TyreLife']`).
 
 !!! warning "Nuances, pas de vraies équivalences"
     - **`Brake`** : dans FastF1 c'est généralement un booléen (freiné / pas freiné), pas un

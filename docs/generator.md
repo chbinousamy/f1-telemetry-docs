@@ -1,9 +1,14 @@
 # Générateur
 
 `telemetry_generator.py` rejoue directement la télémétrie réelle enregistrée du vainqueur d'une
-vraie course F1 25 — vitesse, position, throttle/brake, rapport, régime, DRS, tout vient de la
-donnée FastF1, échantillonnée à 10 Hz — et émet des paquets UDP dans le format binaire exact du
-jeu. Aucune simulation physique : c'est un rejeu, pas un modèle.
+vraie course F1 25 — vitesse, position, throttle/brake, rapport, régime, DRS, météo (pluie,
+température air/piste), tout vient de la donnée FastF1, échantillonnée à 10 Hz (météo à sa
+résolution native, ~1/min) — et émet des paquets UDP dans le format binaire exact du jeu. Aucune
+simulation physique : c'est un rejeu, pas un modèle.
+
+Non repris (voir [Format Données](data-format.md)) : le type de gomme et l'âge des pneus existent
+dans FastF1 mais nécessiteraient le paquet Car Status, jamais implémenté dans
+`f1_packet_format.py`.
 
 ## Cible réseau : `--ip` ou `--network` (mutuellement exclusifs)
 
