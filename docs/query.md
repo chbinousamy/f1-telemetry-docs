@@ -19,9 +19,9 @@ python query_telemetry.py --car 5 --limit 100 \
 
 ## Archiver une session complète
 
-`--archive` fige **une session entière** (les 4 types de paquets) dans `archives/<nom>/`, prête à
-être versionnée avec git — contrairement à `--export` qui ne prend que les N derniers paquets
-`car_telemetry`, toutes sessions mélangées.
+`--archive` fige **une session entière** (les 4 types de paquets, en format FastF1 et en format F1
+25 natif) dans `archives/<nom>/`, prête à être versionnée avec git — contrairement à `--export` qui
+ne prend que les N derniers paquets `car_telemetry`, toutes sessions mélangées.
 
 | Option | Défaut | Description |
 |---|---|---|
@@ -38,12 +38,21 @@ python query_telemetry.py --archive --archive-name "course_spa_2026-08-08"
 Produit :
 ```text
 archives/course_spa_2026-08-08/
-├── session.json
+├── session.json           # format FastF1
+├── session_raw.json       # format F1 25 natif (mêmes champs que le wire format officiel)
 ├── laps.json
+├── laps_raw.json
 ├── telemetry.json
+├── telemetry_raw.json
 ├── motion.json
-└── summary.json          # compte de documents + taille par fichier
+├── motion_raw.json
+└── summary.json           # compte de documents + taille par fichier
 ```
+
+!!! info "Sessions capturées avant le stockage double"
+    Les fichiers `*_raw.json` n'existent que pour les sessions capturées après l'ajout du stockage
+    natif au listener — pour une session plus ancienne, `--archive` les omet simplement (pas de
+    fichier vide).
 
 Puis, pour l'envoyer sur GitHub :
 ```bash

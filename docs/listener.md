@@ -7,8 +7,15 @@ FastF1 et stocke en MongoDB.
 
 - Écoute en UDP (port 20777 par défaut)
 - Parse les paquets binaires F1 25 avec le layout défini dans `f1_packet_format.py`
-- Convertit chaque paquet en document FastF1 **au moment du stockage** (`store_telemetry`)
-- Écrit dans MongoDB, une collection par type de paquet
+- Stocke **chaque paquet deux fois** dans MongoDB (`store_telemetry`) : tel quel dans
+  `<type>_raw_packets` (format F1 25 natif — mêmes noms de champs que le wire format officiel),
+  et converti dans `<type>_packets` (format FastF1)
+
+!!! info "Pourquoi les deux formats"
+    Le format FastF1 (`<type>_packets`) est ce qu'utilisent `query_telemetry.py` et
+    `telemetry_generator.py --replay`. Le format natif (`<type>_raw_packets`) préserve les données
+    telles qu'émises par le jeu — utile si un futur besoin ne correspond pas au découpage FastF1
+    (ex. champs non repris par la conversion). `query_telemetry.py --archive` récupère les deux.
 
 ## Options en ligne de commande
 
